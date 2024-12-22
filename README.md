@@ -33,6 +33,10 @@
   - NodeMailer for sending email notifications.
   - bcryptjs for password hashing.
 
+## Installation
+
+
+
 ## Usage
 
 - **For Employers:**
