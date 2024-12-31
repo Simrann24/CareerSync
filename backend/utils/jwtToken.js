@@ -1,7 +1,8 @@
-import jwt from "jsonwebtoken";
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
-// Define User Schema
+// User Schema definition
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -15,22 +16,37 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
+    select: false, // Do not return password by default in queries
   },
   role: {
     type: String,
-    default: "Job Seeker", // Default role can be 'Job Seeker' or 'Employer'
+    default: 'Job Seeker', // Default role is Job Seeker
   },
 });
 
+// Pre-save hook to hash password
+userSchema.pre('save', async function(next) {
+  if (!this.isModified('password')) return next();
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
+
 // Method to generate JWT Token
-userSchema.methods.getJWTToken = function () {
+userSchema.methods.getJWTToken = function() {
   return jwt.sign(
-    { id: this._id }, // Payload (user id)
-    process.env.JWT_SECRET_KEY, // JWT Secret Key
+    { id: this._id, role: this.role }, // Payload: user id and role
+    process.env.JWT_SECRET_KEY, // Secret key for signing JWT
     {
-      expiresIn: process.env.JWT_EXPIRE || "1d", // Default expiration time
+      expiresIn: process.env.JWT_EXPIRE || '1d', // JWT expiry time (default: 1 day)
     }
   );
 };
 
-export const User = mongoose.model("User", userSchema);
+// Method to compare passwords (for login)
+userSchema.methods.comparePassword = async function(enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
+};
+
+// Export the User model
+export const User = mongoose.model('User', userSchema);
+
