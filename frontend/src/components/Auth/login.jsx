@@ -15,33 +15,41 @@ const Login = () => {
   const { isAuthorized, setIsAuthorized } = useContext(Context);
 
   const handleLogin = async (e) => {
-  e.preventDefault();
-  try {
-    const { data } = await axios.post(
-      "https://careersync-backend.onrender.com/api/v1/user/login",
-      { email, password, role },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      }
-    );
-    toast.success(data.message);
-    setEmail("");
-    setPassword("");
-    setRole("");
-    setIsAuthorized(true); // Update authorization state
-  } catch (error) {
-    console.error("Login Error:", error.response?.data || error.message);
-    toast.error(error.response?.data?.message || "Something went wrong");
-    setIsAuthorized(false); // Ensure the state reflects the error
-  }
-};
+    e.preventDefault();
+    try {
+      // POST request to login
+      const { data } = await axios.post(
+        "https://careersync-backend.onrender.com/api/v1/user/login", // Ensure correct URL
+        { email, password, role },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true, // Ensure cookies are included
+        }
+      );
+      
+      // On successful login
+      toast.success(data.message);
+      setEmail("");
+      setPassword("");
+      setRole("");
 
+      // Mark the user as authorized
+      setIsAuthorized(true);
+    } catch (error) {
+      // Handle errors (check error response)
+      console.error("Login Error:", error.response?.data || error.message);
+      toast.error(error.response?.data?.message || "Something went wrong");
 
-  if(isAuthorized){
-    return <Navigate to={'/'}/>
+      // If there was an error, keep isAuthorized false
+      setIsAuthorized(false);
+    }
+  };
+
+  // Redirect to home if authorized
+  if (isAuthorized) {
+    return <Navigate to="/" />;
   }
 
   return (
