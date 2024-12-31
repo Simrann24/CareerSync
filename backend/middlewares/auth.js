@@ -5,7 +5,7 @@ import { User } from '../models/userSchema.js';
 
 export const isAuthorized = catchAsyncError(async (req, res, next) => {
   // Retrieve the token from cookies
-  const { token } = req.cookies;
+  const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
 
   // If no token is provided, send a 401 Unauthorized error
   if (!token) {
