@@ -17,39 +17,30 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      // POST request to login
       const { data } = await axios.post(
-        "https://careersync-backend.onrender.com/api/v1/user/login", // Ensure correct URL
+        "https://careersync-backend.onrender.com/api/v1/user/login",
         { email, password, role },
         {
           headers: {
             "Content-Type": "application/json",
           },
-          withCredentials: true, // Ensure cookies are included
+          withCredentials: true,
         }
       );
-      
-      // On successful login
       toast.success(data.message);
       setEmail("");
       setPassword("");
       setRole("");
-
-      // Mark the user as authorized
-      setIsAuthorized(true);
+      setIsAuthorized(true); // Update authorization state
     } catch (error) {
-      // Handle errors (check error response)
       console.error("Login Error:", error.response?.data || error.message);
       toast.error(error.response?.data?.message || "Something went wrong");
-
-      // If there was an error, keep isAuthorized false
-      setIsAuthorized(false);
+      setIsAuthorized(false); // Ensure the state reflects the error
     }
   };
 
-  // Redirect to home if authorized
   if (isAuthorized) {
-    return <Navigate to="/" />;
+    return <Navigate to={"/"} />;
   }
 
   return (
@@ -62,9 +53,14 @@ const Login = () => {
           </div>
           <form>
             <div className="inputTag">
-              <label>Login As</label>
+              <label htmlFor="role">Login As</label>
               <div>
-                <select value={role} onChange={(e) => setRole(e.target.value)}>
+                <select
+                  id="role"
+                  name="role"  // Added name for form submission
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                >
                   <option value="">Select Role</option>
                   <option value="Employer">Employer</option>
                   <option value="Job Seeker">Job Seeker</option>
@@ -73,10 +69,12 @@ const Login = () => {
               </div>
             </div>
             <div className="inputTag">
-              <label>Email Address</label>
+              <label htmlFor="email">Email Address</label>
               <div>
                 <input
                   type="email"
+                  id="email"  // Added id for accessibility and autofill
+                  name="email" // Added name for form submission
                   placeholder="zk@gmail.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -85,10 +83,12 @@ const Login = () => {
               </div>
             </div>
             <div className="inputTag">
-              <label>Password</label>
+              <label htmlFor="password">Password</label>
               <div>
                 <input
                   type="password"
+                  id="password" // Added id for accessibility and autofill
+                  name="password" // Added name for form submission
                   placeholder="Your Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -111,3 +111,4 @@ const Login = () => {
 };
 
 export default Login;
+
