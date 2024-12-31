@@ -15,27 +15,30 @@ const Login = () => {
   const { isAuthorized, setIsAuthorized } = useContext(Context);
 
   const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      const { data } = await axios.post(
-        "https://careersync-backend.onrender.com/api/v1/user/login",
-        { email, password, role },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
-      toast.success(data.message);
-      setEmail("");
-      setPassword("");
-      setRole("");
-      setIsAuthorized(true);
-    } catch (error) {
-      toast.error(error.response.data.message);
-    }
-  };
+  e.preventDefault();
+  try {
+    const { data } = await axios.post(
+      "https://careersync-backend.onrender.com/api/v1/user/login",
+      { email, password, role },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      }
+    );
+    toast.success(data.message);
+    setEmail("");
+    setPassword("");
+    setRole("");
+    setIsAuthorized(true); // Update authorization state
+  } catch (error) {
+    console.error("Login Error:", error.response?.data || error.message);
+    toast.error(error.response?.data?.message || "Something went wrong");
+    setIsAuthorized(false); // Ensure the state reflects the error
+  }
+};
+
 
   if(isAuthorized){
     return <Navigate to={'/'}/>
