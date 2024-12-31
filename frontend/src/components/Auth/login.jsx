@@ -8,6 +8,19 @@ import toast from "react-hot-toast";
 import { Context } from "../../main";
 
 const Login = () => {
+
+
+export const loginUser = async (email, password) => {
+    try {
+        const response = await axios.post('/user/login', { email, password });
+        console.log('Login Success:', response.data);
+        return response.data; // Return data to handle it in the calling component
+    } catch (error) {
+        console.error('Login Error:', error.response?.data || error.message);
+        throw error.response?.data || error; // Throw error for better handling in the UI
+    }
+};
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
